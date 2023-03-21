@@ -10,10 +10,11 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Prints the current value of GOMAXPROCS (without modifying it)
-		n := runtime.GOMAXPROCS(-1)
-		log.Printf("GOMAXPROCS==%d\n", n)
-		fmt.Fprintf(w, "GOMAXPROCS==%d\n", n)
+		// Prints the current value of NumCPU and GOMAXPROCS (without modifying them)
+		cpus := runtime.NumCPU()
+		maxprocs := runtime.GOMAXPROCS(-1)
+		log.Printf("NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
+		fmt.Fprintf(w, "NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
 	})
 
 	port := os.Getenv("PORT")
