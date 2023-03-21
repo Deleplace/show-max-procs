@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+
+	_ "go.uber.org/automaxprocs"
 )
 
 func main() {
@@ -13,8 +15,8 @@ func main() {
 		// Prints the current value of NumCPU and GOMAXPROCS (without modifying them)
 		cpus := runtime.NumCPU()
 		maxprocs := runtime.GOMAXPROCS(-1)
-		log.Printf("NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
-		fmt.Fprintf(w, "NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
+		log.Printf("NumCPU==%d\nGOMAXPROCS==%d\n(using go.uber.org/automaxprocs)", cpus, maxprocs)
+		fmt.Fprintf(w, "NumCPU==%d\nGOMAXPROCS==%d\n(using go.uber.org/automaxprocs)", cpus, maxprocs)
 	})
 
 	port := os.Getenv("PORT")
