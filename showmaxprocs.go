@@ -39,7 +39,7 @@ func main() {
 	log.Fatal(err)
 }
 
-var procPattern = regexp.MustCompile(`^processor\ *:`)
+var procPattern = regexp.MustCompile(`^processor\s*:`)
 
 // readFromProcCPUInfo is intended to work on Linux
 func readFromProcCPUInfo() (int, error) {
