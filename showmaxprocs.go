@@ -28,6 +28,15 @@ func main() {
 		}
 	})
 
+	http.HandleFunc("/proc/cpuinfo", func(w http.ResponseWriter, r *http.Request) {
+		info, err := os.ReadFile("/proc/cpuinfo")
+		if err != nil {
+			fmt.Fprintf(w, "error reading /proc/cpuinfo: %v\n", err)
+			return
+		}
+		w.Write(info)
+	})
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
