@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"runtime"
 )
 
@@ -15,6 +17,15 @@ func main() {
 		maxprocs := runtime.GOMAXPROCS(-1)
 		log.Printf("NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
 		fmt.Fprintf(w, "NumCPU==%d\nGOMAXPROCS==%d\n", cpus, maxprocs)
+
+		procCPUInfo, err := readFromProcCPUInfo()
+		if err == nil {
+			log.Printf("/proc/cpuinfo==%d\n", procCPUInfo)
+			fmt.Fprintf(w, "/proc/cpuinfo==%d\n", procCPUInfo)
+		} else {
+			log.Printf("/proc/cpuinfo==unknown (%v)\n", err)
+			fmt.Fprintf(w, "/proc/cpuinfo==unknown (%v)\n", err)
+		}
 	})
 
 	port := os.Getenv("PORT")
@@ -26,4 +37,22 @@ func main() {
 	log.Printf("Listening on port %s", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 	log.Fatal(err)
+}
+
+var procPattern = regexp.MustCompile(`^processor\ *:`)
+
+// readFromProcCPUInfo is intended to work on Linux
+func readFromProcCPUInfo() (int, error) {
+	info, err := os.ReadFile("/proc/cpuinfo")
+	if err != nil {
+		return 0, err
+	}
+	lines := bytes.Split(info, []byte("\n"))
+	hits := 0
+	for _, line := range lines {
+		if procPattern.Match(line) {
+			hits++
+		}
+	}
+	return hits, nil
 }
